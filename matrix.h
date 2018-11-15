@@ -67,9 +67,64 @@ public:
 
     void set(int row, int col, T data)
     {
-        if (row < rows && col < cols)
+        cout << "col: " << col << endl;
+        Node<T>* newNode = new Node<T>(data, row, col);
+        if (row < rows && col < columns)
         {
-            Node<T>* rowHeader = hRows;
+            if (hRows->next == nullptr)
+            {
+                hRows->next = newNode;
+                cout << "first insert: " << hRows->next << " | " << hRows->next->data << endl;
+            }
+            else
+            {
+                int counter = -1;
+                Node<T>** tmp = &(hRows->next);
+
+                while (counter < col && (*tmp)->next)
+                {
+                    counter++;
+                    tmp = &((*tmp)->next);
+                    cout << "c: " << counter << endl;
+                }
+
+                cout << "looking at: " << (*tmp)->data << " at position: " << (*tmp)->col << endl;
+                cout << "counter: " << counter<< endl;
+
+                if(counter == col)
+                {
+                    cout << "hit replace" << endl;
+                    cout << "(*tmp): " << (*tmp)->data << endl;
+                    cout << "(*tmp)->col: " << (*tmp)->col << endl;
+                    /* newNode->next = (*tmp)->next;
+                    *tmp = newNode; */
+                    newNode->next = (*tmp)->next;
+                    *tmp = newNode;
+                }
+                else
+                {
+                    if (col < (*tmp)->col)
+                    {
+                        // Add in between
+                        cout << "hit between" << endl;
+                        cout << "putting " << newNode->data << "->" << (*tmp)->data << endl;
+                        newNode->next = *tmp;
+                        *tmp = newNode;
+                    }
+                    else
+                    {
+                        // Add after
+                        //fakePrint();
+                        cout << "hit after" << endl;
+                        cout << "(*tmp) = " << (*tmp)->data << endl; 
+                        (*tmp)->next = newNode;
+                    }
+                }
+            }
+            fakePrint();
+            cout<< endl << endl; 
+            
+            /* Node<T>* rowHeader = hRows;
             Node<T>* colHeader = hColumns;
 
             for(size_t i = 0; i < row; i++) rowHeader = rowHeader->down;
@@ -96,9 +151,10 @@ public:
                 while (colHeader->down) colHeader = colHeader->down;
                 rowHeader->next = newNode;
                 colHeader->down = newNode;
-            }
+            } */
 
         }
+        else cout << "error" << endl;
         
         
     };
@@ -113,6 +169,20 @@ public:
     Matrix<T> operator-(Matrix<T> other);
     Matrix<T> transposed();
     Matrix<T> operator=(Matrix<T> other);
+
+    void fakePrint()
+    {
+        // Debug
+        cout << "list: " << endl;
+        Node<T>* tmp = hRows->next;
+        while (tmp)
+        {
+            cout << tmp->data << " ";
+            tmp = tmp->next;
+        }
+        cout << endl;
+        // End debug
+    }
 
     //~Matrix();
 };
